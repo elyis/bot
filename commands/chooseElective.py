@@ -16,7 +16,7 @@ from commands.showAgeCategoriesElectives import categoriesSuitableForStudentByAg
 def chooseElective(update, context):
     if len(categoriesSuitableForStudentByAge) > 0:
         btns = [
-            [InlineKeyboardButton(text=ss, callback_data=ss,url="http://itcube56.oksei.ru/") for ss in categoriesSuitableForStudentByAge]
+            [InlineKeyboardButton(text=ss, callback_data=ss) for ss in categoriesSuitableForStudentByAge]
         ]
         reply_markup = InlineKeyboardMarkup(btns)
         context.bot.send_message(chat_id=update.effective_chat.id, reply_markup=reply_markup, text="Выберите факультатив:")

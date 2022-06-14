@@ -1,6 +1,7 @@
 from mysql.connector import connect, Error
 categoriesSuitableForStudentByAge = list()
 
+
 def showAgeCategoriesElectives(update,context):
     age = 0
     if context.args:
