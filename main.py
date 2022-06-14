@@ -3,7 +3,7 @@ import logging
 from mysql.connector import connect, Error
 from telegram import KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup
 
-from bot.Callbacks.chooseElectiveClb import chooseElectiveClb
+from bot.Callbacks.chooseElectiveClb import chooseElectiveClb, selected_elective
 from commands.chooseElective import chooseElective
 from commands.showAgeCategoriesElectives import showAgeCategoriesElectives, categoriesSuitableForStudentByAge
 from database.ElectivesDb import create_table_electives
@@ -30,6 +30,29 @@ start_handler = CommandHandler('choose', chooseElective)
 dispatcher.add_handler(start_handler)
 dispatcher.add_handler(CallbackQueryHandler(chooseElectiveClb))
 
+try:
+    with connect(
+            host="localhost",
+            user="root",
+            password="root",
+            database="it_cub"
+    ) as connection:
+        selectCountFreePlace = f"select count(*) " \
+                               f"from Learners JOIN Electives " \
+                               f"ON Electives.id = Learners.elective_id " \
+                               f"WHERE Electives.name = {selected_elective}"
+        countFreePlace = 0
+        count_max = 20
+        with connection.cursor() as cursor:
+            cursor.execute(selectCountFreePlace)
+            count = 0
+            for raw in cursor.fetchall():
+                count = raw[0]
+            countFreePlace = count_max - count
+            print(countFreePlace)
+except Error as e:
+    print(e)
+
 if __name__ == "__main__":
-    #init_database()
+    init_database()
     updater.start_polling()

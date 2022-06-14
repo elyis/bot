@@ -10,8 +10,4 @@ def chooseElectiveClb(update, context):
     selected_elective = answer
     query.edit_message_text(text=f"Выбран факультатив: {answer}")
 
-def test(update,context):
-
-    context.bot.send_message(chat_id=update.effective_chat.id, text="Выберите факультатив:")
-
 
