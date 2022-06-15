@@ -3,10 +3,10 @@ import logging
 from mysql.connector import connect, Error
 
 # database
-from bot.static_data.Learners import insert_learners
 from database.ElectivesDb import create_table_electives
 from database.LearnersDb import create_table_learner
 from static_data.Electives import inserts_electives
+from static_data.Learners import insert_learners
 
 
 def init_database():
