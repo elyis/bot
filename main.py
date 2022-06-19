@@ -1,58 +1,79 @@
 # бд
 import logging
-from mysql.connector import connect, Error
-from telegram import KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup
 
-from Callbacks.chooseElectiveClb import chooseElectiveClb, selected_elective
-from commands.chooseElective import chooseElective
-from commands.showAgeCategoriesElectives import showAgeCategoriesElectives, categoriesSuitableForStudentByAge
-from database.ElectivesDb import create_table_electives
-from database.LearnersDb import create_table_learner
-from static_data.Electives import inserts_electives
+from classes import newLearners
+from commands.applyStates.AGE import showAvailableElectives
+from commands.applyStates.ELECTIVE import saveSelectedElective
+from commands.applyStates.FULLNAME import enterFullName
+from commands.applyStates.GENDER import enterGender
+from commands.applyStates.NUMPHONE import enterPhoneNum
+from commands.applyStates.RESULT import showResultRegistration
+from commands.applyStates.apply import apply
+from commands.applyStates.cancel import cancel
+from commands.approveReqStates.chooseApplicant import chooseApplicant, acceptMenu
+from commands.approveReqStates.showApplicants import showApplicants
+from commands.removeStates.choose_rm import chooseRm
+from commands.removeStates.distibutor import distibutor
+from commands.removeStates.removeMenu import rmMenu
+from commands.removeStates.remove_elective import removeElective
+from commands.removeStates.remove_more import removeMore
+from config_variable import TOKEN, AGE, ELECTIVE, FULLNAME, NUMPHONE, RESULT, GENDER, CHOOSE_RM, DISTRIBUTOR, \
+    REMOVE_MORE, REMOVE_ELECTIVE, ACCEPT_MENU, APPLICANTS_MENU
+
+# telegram bot
+from telegram.ext import Updater, ConversationHandler, MessageHandler, Filters
+from telegram.ext import CommandHandler
 
 from init_database import init_database
 
-# telegram bot
-from telegram.ext import Updater, CallbackQueryHandler
-from telegram.ext import CommandHandler
+init_database()
 
-TOKEN = '5378657511:AAGBXSLkAZA-AJFD6tp78PLiMfIx1Hfc5MY'
 updater = Updater(token=TOKEN, use_context=True)
 dispatcher = updater.dispatcher
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
-showAgeCategoriesElectives_handler = CommandHandler('showAgeCategories', showAgeCategoriesElectives)
-dispatcher.add_handler(showAgeCategoriesElectives_handler)
+apply_hand = ConversationHandler(
+    entry_points=[CommandHandler("apply", apply)],
+    states={
+        AGE: [MessageHandler(Filters.text, showAvailableElectives)],
+        ELECTIVE: [MessageHandler(Filters.text, saveSelectedElective)],
+        FULLNAME: [MessageHandler(Filters.regex(r"(([А-Яа-я]){2,}([-]?([А-Яа-я]){2,})?([ ])+){2}([А-Яа-я]){2,}"),
+                                  enterFullName)],
+        GENDER: [MessageHandler(Filters.text, enterGender)],
+        NUMPHONE: [
+            MessageHandler(Filters.regex(r"^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$"), enterPhoneNum)],
+        RESULT: [MessageHandler(Filters.text, showResultRegistration)]
 
-start_handler = CommandHandler('choose', chooseElective)
-dispatcher.add_handler(start_handler)
-dispatcher.add_handler(CallbackQueryHandler(chooseElectiveClb))
+    },
+    fallbacks=[CommandHandler("cancel", cancel)],
+    allow_reentry=True
+)
 
-# try:
-#     with connect(
-#             host="localhost",
-#             user="root",
-#             password="root",
-#             database="it_cub"
-#     ) as connection:
-#         selectCountFreePlace = f"select count(*) " \
-#                                f"from Learners JOIN Electives " \
-#                                f"ON Electives.id = Learners.elective_id " \
-#                                f"WHERE Electives.name = {selected_elective}"
-#         countFreePlace = 0
-#         count_max = 20
-#         with connection.cursor() as cursor:
-#             cursor.execute(selectCountFreePlace)
-#             count = 0
-#             for raw in cursor.fetchall():
-#                 count = raw[0]
-#             countFreePlace = count_max - count
-#             print(countFreePlace)
-# except Error as e:
-#     print(e)
+rm_hand = ConversationHandler(
+    entry_points=[CommandHandler("rm", rmMenu)],
+    states={
+        CHOOSE_RM: [MessageHandler(Filters.text, chooseRm)],
+        DISTRIBUTOR: [MessageHandler(Filters.text, distibutor)],
+        REMOVE_MORE: [MessageHandler(Filters.text, removeMore)],
+        REMOVE_ELECTIVE: [MessageHandler(Filters.text, removeElective)]
+    },
+    fallbacks=[CommandHandler("cancel", cancel)]
+)
+
+approve_request_hand = ConversationHandler(
+    entry_points=[CommandHandler("approve_req", showApplicants)],
+    states={
+        APPLICANTS_MENU: [MessageHandler(Filters.text, chooseApplicant)],
+        ACCEPT_MENU: [MessageHandler(Filters.text, acceptMenu)]
+    },
+    fallbacks=[CommandHandler("cancel", cancel)]
+)
+
+dispatcher.add_handler(apply_hand)
+dispatcher.add_handler(rm_hand)
+dispatcher.add_handler(approve_request_hand)
 
 if __name__ == "__main__":
-    # init_database()
     updater.start_polling()
