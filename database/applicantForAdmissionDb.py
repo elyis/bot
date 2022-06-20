@@ -4,7 +4,6 @@ create_table_applicantForAdmission = "CREATE TABLE Applicants(" \
                                      "surname VARCHAR(80) NOT NULL," \
                                      "patronymic VARCHAR(80) NOT NULL," \
                                      "gender INT NOT NULL," \
-                                     "status INT DEFAULT 1," \
                                      "chatId BIGINT NOT NULL," \
                                      "phoneNum VARCHAR(20) NOT NULL," \
                                      "age INT NOT NULL," \

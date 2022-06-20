@@ -7,7 +7,7 @@ from config_variable import host, user, password, db, APPLICANTS_MENU
 electivesIdName = list()
 applicants = list()
 
-
+#Вывод всех поступающих и генерация кнопок
 def showApplicants(update: Update, context):
     gender = "мужской"
     electiveName = ""
@@ -21,7 +21,7 @@ def showApplicants(update: Update, context):
         ) as connection:
             countApplicants = 0
             selectCountApplicants = "SELECT COUNT(*) FROM Applicants"
-            selectApplicants = "SELECT name,surname,patronymic,gender,phoneNum,elective_id FROM Applicants"
+            selectApplicants = "SELECT name,surname,patronymic,gender,phoneNum,elective_id,chatId FROM Applicants"
             selectElectives = "SELECT id,name FROM Electives"
             electivesIdName.clear()
             applicants.clear()
@@ -47,7 +47,7 @@ def showApplicants(update: Update, context):
                         for elec in electivesIdName:
                             if row[5] == elec[0]:
                                 electiveName = elec[1]
-                        applicants.append((row[0], row[1], row[2], row[3], row[4], row[5]))
+                        applicants.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6]))
 
                         update.message.reply_text(text=f"{index}:ФИО:{row[0]} {row[1]} {row[2]}\n"
                                                        f"Пол: {gender}\n"

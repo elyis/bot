@@ -2,14 +2,13 @@ from mysql.connector import connect, Error
 from telegram import Update, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import ConversationHandler
 
-from config_variable import CHOOSE_RM, host, user, password, db, DISTRIBUTOR, REMOVE_MORE, \
-    REMOVE_ELECTIVE
+from config_variable import CHOOSE_RM, host, user, password, db
 
 electives = list()
 learners = list()
 select_el = ""
 
-
+#Список всех факультативов с клавиатурой выборки
 def rmMenu(update: Update, context):
     i = 0
     try:

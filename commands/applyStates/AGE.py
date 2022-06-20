@@ -1,16 +1,19 @@
 from mysql.connector import connect, Error
-from telegram import Update, KeyboardButton, ReplyKeyboardMarkup
+from telegram import Update, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import ConversationHandler
 
+from classes import newLearners
 from config_variable import categoriesSuitableForStudentByAge, ELECTIVE, new_learner, host, user, password, db
 
 
+# Получает возраст ребенка и создает выборку факультетов под его возраст
 def showAvailableElectives(update: Update, context) -> int:
     age = 0
-    print(update.effective_chat.id)
+    elective_id = 0
     if update.message.text.isdigit():
+        new_learner[update.effective_chat.id] = newLearners()
         age = int(update.message.text)
-        new_learner.age = age
+        new_learner[update.effective_chat.id].age = age
         try:
             with connect(
                     host=host,
@@ -18,23 +21,30 @@ def showAvailableElectives(update: Update, context) -> int:
                     password=password,
                     database=db
             ) as connection:
-                selectElectivesOfCertainAgeCategory = f"SELECT name,reserve_places,init_age,final_age FROM Electives WHERE {age} BETWEEN init_age AND final_age"
+                selectElectivesOfCertainAgeCategory = f"SELECT name,init_age,final_age, id,description " \
+                                                      f"FROM Electives WHERE {age} " \
+                                                      f"BETWEEN init_age AND final_age"
+
                 with connection.cursor() as cursor:
                     cursor.execute(selectElectivesOfCertainAgeCategory)
                     categoriesSuitableForStudentByAge.clear()
                     i = 0
-                    for row in cursor.fetchall():
+                    electives = cursor.fetchall()
+                    for row in electives:
                         categoriesSuitableForStudentByAge.append(row[0])
                         places = getAvailablePlacesFromElective(i)
                         if places[0] == 0:
                             pass
                         else:
+                            selectCountPeopleInLine = f"SELECT count(*) FROM Applicants WHERE elective_id = {row[3]}"
+                            cursor.execute(selectCountPeopleInLine)
+                            countPeopleInLine = cursor.fetchall()[0][0]
                             update.message.reply_text(
-                                text=str(i + 1) + ":" + row[0] + ":\n"
-                                                                 "Число резервных мест: " + str(row[1]) + "\n "
-                                                                                                          "Возрастная категория: " + str(
-                                    row[2]) + "-" + str(row[3]) + "\n" +
-                                     "Свободных мест:" + str(places[0]) + "/" + str(places[1])
+                                text=f"{str(i + 1)}:{row[0]}\n"
+                                     f"Возрастная категория:  {str(row[1])} - {str(row[2])}\n"
+                                     f"Свободных мест:  {str(places[0])}/{str(places[1])}\n" 
+                                     f"Число человек в очереди:  {countPeopleInLine}\n\n"
+                                     f"Описание: {row[4]}"
                             )
                         i += 1
         except Error as e:
@@ -43,6 +53,11 @@ def showAvailableElectives(update: Update, context) -> int:
         createBtnsOfElectives(update, context)
         return ELECTIVE
 
+    elif update.message.text.lower() == "/cancel":
+        update.message.reply_text(
+            "Регистрация отменена", reply_markup=ReplyKeyboardRemove()
+        )
+        return ConversationHandler.END
     else:
         update.message.reply_text(text="Указано не число")
 
@@ -90,4 +105,4 @@ def createBtnsOfElectives(update: Update, context):
         reply_markup = ReplyKeyboardMarkup(btns, one_time_keyboard=True)
         update.message.reply_text(reply_markup=reply_markup, text="Факультативы доступные вам: ")
 
-#1025910884
+# 1025910884

@@ -21,8 +21,8 @@ def init_database():
 
             with connection.cursor() as cursor:
                 cursor.execute(create_table_electives)
-                cursor.execute(create_table_applicantForAdmission)
                 cursor.execute(create_table_learner)
+                cursor.execute(create_table_applicantForAdmission)
                 cursor.execute(inserts_electives)
                 cursor.execute(insert_learners)
                 connection.commit()

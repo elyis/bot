@@ -3,10 +3,15 @@ from telegram import Update, KeyboardButton, ReplyKeyboardMarkup
 from config_variable import NUMPHONE, new_learner, GENDER
 
 
+#Ввод ФИО и выбор пола ребенка
 def enterFullName(update: Update, context):
-    fullname = update.message.text.split(" ")
+    fullname = update.message.text
+    while "  " in fullname:
+        fullname = fullname.replace("  ", " ")
+    fullname = fullname.split(" ")
+
     if len(fullname) == 3:
-        new_learner.setFullname(fullname)
+        new_learner[update.effective_chat.id].setFullname(fullname)
 
         btns = [
             [KeyboardButton(text="Мужской")],

@@ -5,7 +5,7 @@ create_table_learner = "CREATE TABLE Learners(" \
                            "patronymic VARCHAR(80) NOT NULL," \
                            "gender INT NOT NULL," \
                            "phone_number VARCHAR(20)," \
-                           "status INT DEFAULT 0," \
+                           "chatId BIGINT," \
                            "elective_id INT," \
                            "FOREIGN KEY (elective_id) REFERENCES Electives(id)" \
                        ")"

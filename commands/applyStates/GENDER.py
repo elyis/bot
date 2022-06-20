@@ -3,11 +3,13 @@ from telegram import Update, ReplyKeyboardRemove
 from config_variable import NUMPHONE, new_learner
 
 
+# Определение пола человека и запрос на ввод российского номера
 def enterGender(update: Update, context):
-    if update.message.text.lower() in ("мужской","м"):
-        new_learner.gender = 0
+    if update.message.text.lower() in ("мужской", "м"):
+        new_learner[update.effective_chat.id].gender = 0
     else:
-        new_learner.gender = 1
+        new_learner[update.effective_chat.id].gender = 1
+
     update.message.reply_text("Принято\nФорматы доступных номеров телефона:", reply_markup=ReplyKeyboardRemove())
     update.message.reply_text("+79261234567\n"
                               "89261234567\n"

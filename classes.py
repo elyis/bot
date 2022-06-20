@@ -14,3 +14,12 @@ class newLearners:
         self.name = fullname[1]
         self.surname = fullname[0]
         self.patronymic = fullname[2]
+
+
+class newElective:
+    def __init__(self):
+        self.name = ""
+        self.description = ""
+        self.init_age = 0
+        self.final_age = 0
+        self.total_seats = 0
