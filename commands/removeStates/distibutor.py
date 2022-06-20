@@ -2,9 +2,8 @@
 from telegram import Update, ReplyKeyboardRemove
 from telegram.ext import ConversationHandler
 
-from commands.removeStates.choose_rm import showLearner
+from commands.removeStates.choose_rm import showLearner, removeElective
 from commands.removeStates.removeMenu import rmMenu
-from commands.removeStates.remove_elective import removeElective
 from config_variable import REMOVE_MORE, CHOOSE_RM
 
 

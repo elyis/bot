@@ -7,7 +7,6 @@ def addTotalSeats(update: Update, context):
     query = update.message.text
     if query.isdigit():
         new_elective.total_seats = int(query)
-        print(new_elective.total_seats)
 
         btns = [
             [KeyboardButton(text="Добавить")],

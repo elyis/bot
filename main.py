@@ -21,10 +21,9 @@ from commands.applyStates.apply import apply
 from commands.applyStates.cancel import cancel
 from commands.approveReqStates.chooseApplicant import chooseApplicant, acceptMenu
 from commands.approveReqStates.showApplicants import showApplicants
-from commands.removeStates.choose_rm import chooseRm
+from commands.removeStates.choose_rm import chooseRm, removeElective
 from commands.removeStates.distibutor import distibutor
 from commands.removeStates.removeMenu import rmMenu
-from commands.removeStates.remove_elective import removeElective
 from commands.removeStates.remove_more import removeMore
 from commands.start import start
 from config_variable import TOKEN, AGE, ELECTIVE, FULLNAME, NUMPHONE, RESULT, GENDER, CHOOSE_RM, DISTRIBUTOR, \

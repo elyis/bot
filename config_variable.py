@@ -6,6 +6,10 @@ categoriesSuitableForStudentByAge = list()
 new_learner = {}
 new_elective = newElective()
 
+electives = list()
+learners = list()
+select_el = ""
+
 admin_id = 5329451369
 
 #Состояния для подачи заявки

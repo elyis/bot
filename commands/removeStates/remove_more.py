@@ -1,8 +1,7 @@
 from mysql.connector import connect, Error
 from telegram import Update, KeyboardButton, ReplyKeyboardRemove, ReplyKeyboardMarkup
 
-from commands.removeStates.removeMenu import learners
-from config_variable import host, user, password, db, DISTRIBUTOR
+from config_variable import host, user, password, db, DISTRIBUTOR, learners
 
 
 def removeMore(update: Update, context):
