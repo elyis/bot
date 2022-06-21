@@ -1,4 +1,5 @@
-from telegram import Update, KeyboardButton, ReplyKeyboardMarkup
+from telegram import Update, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
+from telegram.ext import ConversationHandler
 
 from config_variable import NUMPHONE, new_learner, GENDER
 
@@ -20,5 +21,12 @@ def enterFullName(update: Update, context):
         update.message.reply_text(text="Выберите пол ребенка:",
                                   reply_markup=ReplyKeyboardMarkup(btns, one_time_keyboard=True))
         return GENDER
+
+    elif update.message.text.lower() == "/cancel":
+        update.message.reply_text(
+            "Регистрация отменена", reply_markup=ReplyKeyboardRemove()
+        )
+        return ConversationHandler.END
+
     else:
         update.message.reply_text("Указанно неккоректное ФИО. Пожалуйста,введите ФИО ребенка полностью:")

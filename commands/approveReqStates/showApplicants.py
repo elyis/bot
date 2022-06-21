@@ -7,7 +7,7 @@ from config_variable import host, user, password, db, APPLICANTS_MENU
 electivesIdName = list()
 applicants = list()
 
-#Вывод всех поступающих и генерация кнопок
+#Вывод всех поступающих и генерация кнопок с их индексами
 def showApplicants(update: Update, context):
     gender = "мужской"
     electiveName = ""

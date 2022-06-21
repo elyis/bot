@@ -11,12 +11,11 @@ def saveSelectedElective(update: Update, context):
     if query.isdigit():
         if int(query) in range(1, len(categoriesSuitableForStudentByAge) + 1):
             new_learner[update.effective_chat.id].elective = categoriesSuitableForStudentByAge[int(query) - 1]
-            print("Из выбора электива: ",new_learner[update.effective_chat.id].elective)
             update.message.reply_text("Введите ФИО ребенка полностью:", reply_markup=ReplyKeyboardRemove())
             return FULLNAME
 
         else:
-            update.message.reply_text("Введено значение вне доступных категорий")
+            update.message.reply_text("Введено значение не являющееся индексом доступных элективов. Пожалуйста, введите число из доступных")
 
     elif update.message.text.lower() == "/cancel":
         update.message.reply_text(

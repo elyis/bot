@@ -1,4 +1,3 @@
-
 from telegram import Update, ReplyKeyboardRemove
 from telegram.ext import ConversationHandler
 
@@ -25,6 +24,10 @@ def distibutor(update: Update, context):
     elif query.lower() == "удалить электив":
         removeElective(update, context)
         return CHOOSE_RM
-    else:
-        update.message.reply_text(text="Удаление завершенно", reply_markup=ReplyKeyboardRemove())
+
+    elif update.message.text.lower() == "/cancel":
+        update.message.reply_text(text="Действие отменено", reply_markup=ReplyKeyboardRemove())
         return ConversationHandler.END
+
+    else:
+        update.message.reply_text(text="Введенно неизвестное действие. Пожалуйста, выберите из списка",)

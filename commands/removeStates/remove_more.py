@@ -1,9 +1,11 @@
 from mysql.connector import connect, Error
 from telegram import Update, KeyboardButton, ReplyKeyboardRemove, ReplyKeyboardMarkup
+from telegram.ext import ConversationHandler
 
 from config_variable import host, user, password, db, DISTRIBUTOR, learners
 
 
+# Удаление выбранного учащегося из электива
 def removeMore(update: Update, context):
     query = update.message.text
     if query.isdigit():
@@ -41,6 +43,11 @@ def removeMore(update: Update, context):
                                       reply_markup=ReplyKeyboardMarkup(btns, one_time_keyboard=True))
             return DISTRIBUTOR
         else:
-            update.message.reply_text(text="Число не является индексом ученика")
+            update.message.reply_text(text="Число не является индексом ученика. Пожалуйста, введите индекс ученика")
+
+    elif update.message.text.lower() == "/cancel":
+        update.message.reply_text(text="Действие отменено", reply_markup=ReplyKeyboardRemove())
+        return ConversationHandler.END
+
     else:
-        update.message.reply_text(text="Введено не число")
+        update.message.reply_text(text="Введено не число. Пожалуйста, введите индекс ученика")

@@ -8,7 +8,8 @@ from config_variable import host, user, password, db
 
 selectApplicant = tuple()
 
-#Сохранение выбранного поступающего и меню выбора действия над ним
+
+# Сохранение выбранного поступающего и меню выбора действия над ним
 def chooseApplicant(update: Update, context):
     query = update.message.text
     if query.isdigit():
@@ -32,18 +33,19 @@ def chooseApplicant(update: Update, context):
                                       reply_markup=ReplyKeyboardMarkup(btns, one_time_keyboard=True))
             return ACCEPT_MENU
         else:
-            update.message.reply_text(text="Число вне диапазона")
+            update.message.reply_text(text="Число не является индексом заявки. Пожалуйста, введите число(индекс) заявки")
 
     elif update.message.text.lower() == "/cancel":
         update.message.reply_text(
             "Команда отмененна", reply_markup=ReplyKeyboardRemove()
         )
         return ConversationHandler.END
+
     else:
-        update.message.reply_text(text="Введенно не число")
+        update.message.reply_text(text="Введенно не число. Пожалуйста, введите число(индекс) заявки")
 
 
-#Обработка действия над выбранным поступающим
+# Обработка действия над выбранным поступающим
 def acceptMenu(update: Update, context):
     query = update.message.text
     electiveName = ""
@@ -86,6 +88,7 @@ def acceptMenu(update: Update, context):
                                                                   f"{selectApplicant[1]} "
                                                                   f"{selectApplicant[2]} "
                                                                   f"на направление '{electiveName}'")
+        return ConversationHandler.END
 
     elif query.lower() == "отклонить":
         try:
@@ -110,9 +113,24 @@ def acceptMenu(update: Update, context):
                     connection.commit()
         except Error as e:
             print(e)
+        update.message.reply_text(text="Заявка отклонена", reply_markup=ReplyKeyboardRemove())
         context.bot.send_message(chat_id=selectApplicant[6], text=f"Заявка отклонена для "
                                                                   f"{selectApplicant[0]} "
                                                                   f"{selectApplicant[1]} "
                                                                   f"{selectApplicant[2]} "
                                                                   f"на направление '{electiveName}'")
-    return ConversationHandler.END
+        return ConversationHandler.END
+
+    elif query.lower() == "завершить":
+        update.message.reply_text(text="Работа с заявками завершенна", reply_markup=ReplyKeyboardRemove())
+        return ConversationHandler.END
+
+    elif update.message.text.lower() == "/cancel":
+        update.message.reply_text(
+            "Команда отменена", reply_markup=ReplyKeyboardRemove()
+        )
+        return ConversationHandler.END
+
+    else:
+        update.message.reply_text(text="Введено неизвестное значение. Пожалуйста, воспользуйтесь вспомогательной "
+                                       "клавиатурой")

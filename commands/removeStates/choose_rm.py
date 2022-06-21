@@ -1,10 +1,11 @@
 from mysql.connector import connect, Error
 from telegram import Update, ReplyKeyboardRemove, KeyboardButton, ReplyKeyboardMarkup
+from telegram.ext import ConversationHandler
 
 from commands.removeStates.removeMenu import rmMenu
 from config_variable import DISTRIBUTOR, host, user, password, db, electives, learners
 
-
+# Определяет выбранный электив и выводит действия над ним
 def chooseRm(update: Update, context):
     query = update.message.text
     if query.isdigit():
@@ -25,11 +26,17 @@ def chooseRm(update: Update, context):
             return DISTRIBUTOR
 
         else:
-            update.message.reply_text(text="Число не относится к номерам элективов")
+            update.message.reply_text(text="Число не относится к номерам элективов. Пожалуйста, введите число(индекс) доступного факультатива")
+
+    elif query.lower() == "/cancel":
+        update.message.reply_text("Команда отменена", reply_markup=ReplyKeyboardRemove())
+        return ConversationHandler.END
+
     else:
-        update.message.reply_text(text="Введено не число")
+        update.message.reply_text(text="Введено не число. Пожалуйста, введите число(индекс) доступного факультатива")
 
 
+# Выводит информацию о всех обучающихся
 def showLearner(update: Update, context):
     i = 0
     try:
@@ -39,7 +46,6 @@ def showLearner(update: Update, context):
                 password=password,
                 database=db
         ) as connection:
-            print(f"{select_el} from showLearners")
             selectLearners = f"SELECT Learners.name,surname,patronymic,phone_number " \
                              f"FROM Learners JOIN Electives " \
                              f"ON Electives.id = Learners.elective_id " \

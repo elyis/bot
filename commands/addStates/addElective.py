@@ -28,9 +28,16 @@ def addElective(update: Update, context):
                     connection.commit()
         except Error as e:
             print(e)
+        return ConversationHandler.END
 
-    else:
+    elif query.lower() == "отклонить":
         update.message.reply_text(text="Выбрано: отклонение",
                                   reply_markup=ReplyKeyboardRemove())
+        return ConversationHandler.END
 
-    return ConversationHandler.END
+    elif query.lower() == "/cancel":
+        update.message.reply_text("Команда отменена", reply_markup=ReplyKeyboardRemove())
+        return ConversationHandler.END
+
+    else:
+        update.message.reply_text(text="Неизвестная команда, пожалуйста воспользуйтесь вспомогательной клавиатурой")

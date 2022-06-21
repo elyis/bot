@@ -21,7 +21,7 @@ def showResultRegistration(update: Update, context):
                                   str(new_learner[chat_id].age) + " лет\nТелефон: " +
                                   new_learner[chat_id].phoneNum + "\nПодает заявку на " +
                                   f"'{new_learner[chat_id].elective}'")
-    update.message.reply_text("Заявка отправленна,вам придет уведомление в чат", reply_markup=ReplyKeyboardRemove())
+    update.message.reply_text("Заявка отправленна, вам придет уведомление в чат", reply_markup=ReplyKeyboardRemove())
 
     try:
         with connect(
